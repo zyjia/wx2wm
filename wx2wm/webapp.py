@@ -4,9 +4,12 @@ import qrcode
 import web
 import time
 from PIL import Image
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 urls = (
-    '/','Index'
+    '/', 'Index'
 
 )
 render = web.template.render('templates')
@@ -22,16 +25,16 @@ def code(info):
         '''
         BEGIN:VCARD\n
         VERSION:3.0\n
-        FN:%s\n
-        ORG:%s\n
-        TITLE:%s\n
-        ADR;WORK:%s\n
-        TEL;WORK:%s\n
-        EMAIL;WORK:%s\n
-        URL:%s\n
-        NOTE:%s\n
+        FN:%s\n             #名字
+        ORG:%s\n            #公司
+        TITLE:%s\n          #职位
+        ADR;WORK:%s\n       #地址
+        TEL;WORK:%s\n       #联系电话
+        EMAIL;WORK:%s\n     #邮箱
+        URL:%s\n            #个人主页
+        NOTE:%s\n           #备注
         END:VCARD
-        '''%(info['name'], info['company'], info['title'], info['address'], info['mobile'], info['email'], info['url'],info['desc'])
+        ''' % (info['name'], info['company'], info['title'], info['address'], info['mobile'], info['email'], info['url'],info['desc'])
     )   #添加数据
     img = qr.make_image()   #创建二维码
     img = img.convert("RGBA")   #转换为黑白格式
@@ -46,20 +49,20 @@ def code(info):
         icon_w = size_w
     if icon_h > size_h:
         icon_h = size_w
-    icon = icon.resize((icon_w, icon_h),Image.ANTIALIAS)
+    icon = icon.resize((icon_w, icon_h), Image.ANTIALIAS)
     w = int(img_w-icon_w)/2
     h = int(img_h-icon_h)/2
     img.paste(icon, (w,h), icon)
-    path = "static/CardImg/%s.png"%time.time()
+    path = "static/CardImg/%s.png" % time.time()
     img.save(path)
     return path
 
 class Index(object):
     def GET(self):
-        return render.Index()
+        return render.index()
     def POST(self):
         print web.input()
         return code(web.input()) #返回图片地址
 
 if __name__ == '__main__':
-    web.application(urls,globals()).run()
+    web.application(urls, globals()).run()
